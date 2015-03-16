@@ -21,7 +21,7 @@ log = logging.getLogger(__name__)
 
 abort = base.abort
 render = base.render
-validate = base.validate
+_validate = ckan.lib.navl.dictization_functions.validate
 
 check_access = logic.check_access
 get_action = logic.get_action
@@ -283,7 +283,7 @@ class UserController(base.BaseController):
 
             schema = self._db_to_edit_form_schema()
             if schema:
-                old_data, errors = validate(old_data, schema)
+                old_data, errors = _validate(old_data, schema, context)
 
             c.display_name = old_data.get('display_name')
             c.user_name = old_data.get('name')
