@@ -1273,7 +1273,7 @@ def tag_create(context, data_dict):
     if errors:
         raise ValidationError(errors)
 
-    tag = model_save.tag_dict_save(data_dict, context)
+    tag = model_save.tag_dict_save(data, context)
 
     if not context.get('defer_commit'):
         model.repo.commit()

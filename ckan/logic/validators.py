@@ -12,6 +12,7 @@ from ckan.model import (MAX_TAG_LENGTH, MIN_TAG_LENGTH,
                         PACKAGE_VERSION_MAX_LENGTH,
                         VOCABULARY_NAME_MAX_LENGTH,
                         VOCABULARY_NAME_MIN_LENGTH)
+from ckan.model import vocabulary
 import ckan.new_authz as new_authz
 
 from ckan.common import _
@@ -647,10 +648,10 @@ def vocabulary_id_not_changed(value, context):
 def vocabulary_id_exists(value, context):
     model = context['model']
     session = context['session']
-    result = session.query(model.Vocabulary).get(value)
+    result = vocabulary.Vocabulary.get(value)
     if not result:
         raise Invalid(_('Tag vocabulary was not found.'))
-    return value
+    return result.id
 
 def tag_in_vocabulary_validator(value, context):
     model = context['model']
