@@ -105,6 +105,10 @@ def get_globals_key(key):
         return mappings[key]
     elif key.startswith('ckan.'):
         return key[5:]
+    elif key.startswith('ckanext.'):
+        return key # leave prefix
+
+    raise Exception('Unmapped key: ' + key)
 
 def reset():
     ''' set updatable values from config '''
