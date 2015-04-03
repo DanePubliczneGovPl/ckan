@@ -630,7 +630,7 @@ class GroupController(base.BaseController):
             data_dict['include_datasets'] = False
             c.group_dict = self._action('group_show')(context, data_dict)
         except NotAuthorized:
-            abort(401, _('Unauthorized to delete group %s') % '')
+            abort(401, _('Unauthorized to show group %s') % id)
         except NotFound:
             abort(404, _('Group not found'))
         return self._render_template('group/members.html')
