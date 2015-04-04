@@ -97,10 +97,12 @@ def _activities_union_all(*qlist):
         union_all(*[q.subquery().select() for q in qlist])
         ).distinct(model.Activity.timestamp)
 
-def _activities_at_offset(q, limit, offset):
+def _activities_at_offset(q, limit, offset, filtered_out_users = None):
     '''
     Return a list of all activities at an offset with a limit.
     '''
+    if filtered_out_users:
+        q = q.filter(~ckan.model.Activity.user_id.in_(filtered_out_users))
     return _activities_limit(q, limit, offset).all()
 
 def _activities_from_user_query(user_id):
@@ -126,7 +128,7 @@ def _user_activity_query(user_id, limit):
     return _activities_union_all(q1, q2)
 
 
-def user_activity_list(user_id, limit, offset):
+def user_activity_list(user_id, limit, offset, filtered_out_users = None):
     '''Return user_id's public activity stream.
 
     Return a list of all activities from or about the given user, i.e. where
@@ -138,7 +140,7 @@ def user_activity_list(user_id, limit, offset):
 
     '''
     q = _user_activity_query(user_id, limit + offset)
-    return _activities_at_offset(q, limit, offset)
+    return _activities_at_offset(q, limit, offset, filtered_out_users)
 
 
 def _package_activity_query(package_id):
@@ -151,7 +153,7 @@ def _package_activity_query(package_id):
     return q
 
 
-def package_activity_list(package_id, limit, offset):
+def package_activity_list(package_id, limit, offset, filtered_out_users = None):
     '''Return the given dataset (package)'s public activity stream.
 
     Returns all activities  about the given dataset, i.e. where the given
@@ -163,7 +165,7 @@ def package_activity_list(package_id, limit, offset):
 
     '''
     q = _package_activity_query(package_id)
-    return _activities_at_offset(q, limit, offset)
+    return _activities_at_offset(q, limit, offset, filtered_out_users)
 
 
 def _group_activity_query(group_id):
@@ -191,7 +193,7 @@ def _group_activity_query(group_id):
     return q
 
 
-def group_activity_list(group_id, limit, offset):
+def group_activity_list(group_id, limit, offset, filtered_out_users = None):
     '''Return the given group's public activity stream.
 
     Returns all activities where the given group or one of its datasets is the
@@ -203,7 +205,7 @@ def group_activity_list(group_id, limit, offset):
 
     '''
     q = _group_activity_query(group_id)
-    return _activities_at_offset(q, limit, offset)
+    return _activities_at_offset(q, limit, offset, filtered_out_users)
 
 
 def _activites_from_users_followed_by_user_query(user_id, limit):
@@ -285,7 +287,7 @@ def _dashboard_activity_query(user_id, limit):
     return _activities_union_all(q1, q2)
 
 
-def dashboard_activity_list(user_id, limit, offset):
+def dashboard_activity_list(user_id, limit, offset, filtered_out_users = None):
     '''Return the given user's dashboard activity stream.
 
     Returns activities from the user's public activity stream, plus
@@ -296,7 +298,7 @@ def dashboard_activity_list(user_id, limit, offset):
 
     '''
     q = _dashboard_activity_query(user_id, limit + offset)
-    return _activities_at_offset(q, limit, offset)
+    return _activities_at_offset(q, limit, offset, filtered_out_users)
 
 def _changed_packages_activity_query():
     '''Return an SQLAlchemyu query for all changed package activities.
@@ -311,7 +313,7 @@ def _changed_packages_activity_query():
     return q
 
 
-def recently_changed_packages_activity_list(limit, offset):
+def recently_changed_packages_activity_list(limit, offset, filtered_out_users = None):
     '''Return the site-wide stream of recently changed package activities.
 
     This activity stream includes recent 'new package', 'changed package' and
@@ -319,4 +321,4 @@ def recently_changed_packages_activity_list(limit, offset):
 
     '''
     q = _changed_packages_activity_query()
-    return _activities_at_offset(q, limit, offset)
+    return _activities_at_offset(q, limit, offset, filtered_out_users)
