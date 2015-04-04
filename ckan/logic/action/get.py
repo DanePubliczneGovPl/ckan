@@ -3204,7 +3204,8 @@ def dashboard_activity_list_html(context, data_dict):
     offset = data_dict.get('offset', 0)
     extra_vars = {
         'controller': 'user',
-        'action': 'dashboard',
+        'action': 'activity',
+        'id': context['user'],
         'offset': offset,
     }
     return activity_streams.activity_list_to_html(context, activity_stream,
