@@ -1978,7 +1978,7 @@ def _tag_search(context, data_dict):
     # TODO: should we check for user authentication first?
     q = model.Session.query(model.Tag)
 
-    if 'vocabulary_id' in data_dict:
+    if data_dict.get('vocabulary_id', None):
         # Filter by vocabulary.
         vocab = model.Vocabulary.get(_get_or_bust(data_dict, 'vocabulary_id'))
         if not vocab:
