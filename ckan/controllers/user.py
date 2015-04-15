@@ -459,12 +459,12 @@ class UserController(base.BaseController):
                                   unicode(e))
         return render('user/request_reset.html')
 
-    def perform_reset(self, id):
+    def perform_reset(self, username):
         # FIXME 403 error for invalid key is a non helpful page
         # FIXME We should reset the reset key when it is used to prevent
         # reuse of the url
         context = {'model': model, 'session': model.Session,
-                   'user': id,
+                   'user': username,
                    'keep_email': True}
 
         try:
@@ -473,7 +473,7 @@ class UserController(base.BaseController):
             abort(401, _('Unauthorized to reset password.'))
 
         try:
-            data_dict = {'id': id}
+            data_dict = {'id': username}
             user_dict = get_action('user_show')(context, data_dict)
 
             user_obj = context['user_obj']
@@ -497,7 +497,7 @@ class UserController(base.BaseController):
                 h.flash_success(_("Your password has been reset."))
                 h.redirect_to('/')
             except NotAuthorized:
-                h.flash_error(_('Unauthorized to edit user %s') % id)
+                h.flash_error(_('Unauthorized to edit user %s') % username)
             except NotFound, e:
                 h.flash_error(_('User not found'))
             except DataError:

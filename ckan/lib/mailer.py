@@ -136,7 +136,7 @@ def get_reset_link(user):
     return urljoin(g.site_url,
                    h.url_for(controller='user',
                            action='perform_reset',
-                           id=user.id,
+                           username=user.name,
                            key=user.reset_key))
 
 def send_reset_link(user):
