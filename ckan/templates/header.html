@@ -74,7 +74,7 @@
       <span class="icon-bar"></span>
     </button>
     {# The .header-image class hides the main text and uses image replacement for the title #}
-    <hgroup class="{{ g.header_class }} pull-left">
+    <div class="{{ g.header_class }} pull-left">
 
       {% block header_logo %}
         {% if g.site_logo %}
@@ -87,7 +87,7 @@
         {% endif %}
       {% endblock %}
 
-    </hgroup>
+    </div >
 
     <div class="nav-collapse collapse">
 
