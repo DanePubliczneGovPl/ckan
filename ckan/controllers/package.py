@@ -925,6 +925,16 @@ class PackageController(base.BaseController):
                     # This is actually an update not a save
                     data_dict['id'] = data_dict['pkg_name']
                     del data_dict['pkg_name']
+
+                    if request.params['save'] == 'finish':
+                        data_dict['state'] = 'active'
+
+                        # this is actually an edit not a save
+                        pkg_dict = get_action('package_update')(context, data_dict)
+
+                        # redirect to view
+                        self._form_save_redirect(pkg_dict['name'], 'new', package_type=package_type)
+
                     # don't change the dataset state
                     data_dict['state'] = 'draft'
                     # this is actually an edit not a save
@@ -942,7 +952,7 @@ class PackageController(base.BaseController):
                                         id=pkg_dict['name'])
                     redirect(url)
                 # Make sure we don't index this dataset
-                if request.params['save'] not in ['go-resource', 'go-metadata']:
+                if request.params['save'] not in ['go-resource', 'go-metadata', 'finish']:
                     data_dict['state'] = 'draft'
                 # allow the state to be changed
                 context['allow_state_change'] = True
@@ -951,7 +961,7 @@ class PackageController(base.BaseController):
             context['message'] = data_dict.get('log_message', '')
             pkg_dict = get_action('package_create')(context, data_dict)
 
-            if ckan_phase:
+            if ckan_phase and not request.params['save'] == 'finish':
                 # redirect to add dataset resources
                 url = h.url_for(controller='package',
                                 action='new_resource',
