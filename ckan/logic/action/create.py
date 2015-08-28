@@ -302,7 +302,24 @@ def resource_create(context, data_dict):
         context.pop('defer_commit')
     except ValidationError, e:
         errors = e.error_dict['resources'][-1]
-        raise ValidationError(errors)
+
+        if errors:
+            raise ValidationError(errors)
+
+        # error in other resource that is not up to date with current restrictions
+        if not 'schema' in context:
+            package_plugin = lib_plugins.lookup_package_plugin(pkg_dict['type'])
+            context['schema'] = package_plugin.update_package_schema()
+
+        context['schema']['resources'].pop('resource_type', None)
+
+        try:
+            context['defer_commit'] = True
+            _get_action('package_update')(context, pkg_dict)
+            context.pop('defer_commit')
+        except ValidationError, e:
+            errors = {'__error': ['Errors found in package or other resources']}
+            raise ValidationError(errors)
 
     ## Get out resource_id resource from model as it will not appear in
     ## package_show until after commit

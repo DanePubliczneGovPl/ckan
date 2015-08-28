@@ -300,7 +300,7 @@ def package_update(context, data_dict):
     # get the schema
     package_plugin = lib_plugins.lookup_package_plugin(pkg.type)
     if 'schema' in context:
-        schema = context['schema']
+        schema = context.pop('schema')
     else:
         schema = package_plugin.update_package_schema()
 
