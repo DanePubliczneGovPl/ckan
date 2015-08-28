@@ -189,7 +189,7 @@ class PackageController(base.BaseController):
             return search_url(params, package_type)
 
         c.sort_by = _sort_by
-        if sort_by is None:
+        if not sort_by:
             c.sort_by_fields = []
         else:
             c.sort_by_fields = [field.split()[0]
@@ -695,9 +695,13 @@ class PackageController(base.BaseController):
                         errors = {}
                         error_summary = {_('Error'): msg}
                         return self.new_resource(id, data, errors, error_summary)
-                # we have a resource so let them add metadata
+                # XXX race condition if another user edits/deletes
+                data_dict = get_action('package_show')(context, {'id': id})
+                get_action('package_update')(
+                    dict(context, allow_state_change=True),
+                    dict(data_dict, state='active'))
                 redirect(h.url_for(controller='package',
-                                   action='new_metadata', id=id))
+                                   action='read', id=id))
 
             data['package_id'] = id
             try:
