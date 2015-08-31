@@ -155,8 +155,25 @@ def resource_update(context, data_dict):
         updated_pkg_dict = _get_action('package_update')(context, pkg_dict)
         context.pop('defer_commit')
     except ValidationError, e:
-        errors = e.error_dict['resources'][n]
-        raise ValidationError(errors)
+        errors = e.error_dict['resources'][-1]
+
+        if errors:
+            raise ValidationError(errors)
+
+        # error in other resource that is not up to date with current restrictions
+        if not 'schema' in context:
+            package_plugin = lib_plugins.lookup_package_plugin(pkg_dict['type'])
+            context['schema'] = package_plugin.update_package_schema()
+
+        context['schema']['resources']['resource_type'] = [plugins.toolkit.get_validator('ignore_missing')]
+
+        try:
+            context['defer_commit'] = True
+            _get_action('package_update')(context, pkg_dict)
+            context.pop('defer_commit')
+        except ValidationError, e:
+            errors = {'__error': ['Errors found in package or other resources']}
+            raise ValidationError(errors)
 
     upload.upload(id, uploader.get_max_resource_size())
     model.repo.commit()

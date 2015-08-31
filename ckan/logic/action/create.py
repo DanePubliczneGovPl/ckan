@@ -314,7 +314,7 @@ def resource_create(context, data_dict):
             package_plugin = lib_plugins.lookup_package_plugin(pkg_dict['type'])
             context['schema'] = package_plugin.update_package_schema()
 
-        context['schema']['resources'].pop('resource_type', None)
+        context['schema']['resources']['resource_type'] = [plugins.toolkit.get_validator('ignore_missing')]
 
         try:
             context['defer_commit'] = True
@@ -1111,7 +1111,7 @@ def user_invite(context, data_dict):
 
 def _get_random_username_from_email(email):
     localpart = email.split('@')[0]
-    cleaned_localpart = re.sub(r'[^\w]', '-', localpart).lower()
+    cleaned_localpart = re.sub(r'[^\w]', '-', localpart).lower(ocalpart)
 
     # if we can't create a unique user name within this many attempts
     # then something else is probably wrong and we should give up
