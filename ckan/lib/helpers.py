@@ -13,9 +13,9 @@ import os
 import urllib
 import urlparse
 import pprint
-import copy
 import urlparse
 from urllib import urlencode
+from string import Template
 
 from paste.deploy.converters import asbool
 from webhelpers.html import escape, HTML, literal, url_escape
@@ -894,14 +894,24 @@ class Page(paginate.Page):
     def pager(self, *args, **kwargs):
         kwargs.update(
             format=u"<div class='pagination pagination-centered'><ul>$link_previous ~2~ $link_next</ul></div>",
-            symbol_previous=u'«', symbol_next=u'»',
+            symbol_previous=literal('<span class="wcag_hide">' + _('Previous results page') + '</span>' + u'«'),
+            symbol_next=literal('<span class="wcag_hide">' + _('Next results page') + '</span>' + u'»'),
+            symbol_first=literal('<span class="wcag_hide">' + _('First results page') + '</span>' + '<<'),
+            symbol_last=literal('<span class="wcag_hide">' + _('Last results page') + '</span>' + '>>'),
+            page_format=literal(_('<span class="wcag_hide">Page </span>$pagenum')),
             curpage_attr={'class': 'active'}, link_attr={}
         )
+        self.page_format = kwargs['page_format']
+        del kwargs['page_format']
+
         return super(Page, self).pager(*args, **kwargs)
 
     # Put each page link into a <li> (for Bootstrap to style it)
 
     def _pagerlink(self, page, text, extra_attributes=None):
+        if re.match(r'^(\d+)$', text):
+            text = Template(self.page_format).safe_substitute({'pagenum': text})
+
         anchor = super(Page, self)._pagerlink(page, text)
         extra_attributes = extra_attributes or {}
         return HTML.li(anchor, **extra_attributes)

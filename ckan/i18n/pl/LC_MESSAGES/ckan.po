@@ -4854,3 +4854,23 @@ msgstr ""
 #: ckanext/webpageview/theme/templates/webpage_form.html:3
 msgid "eg. http://example.com (if blank uses resource url)"
 msgstr ""
+
+#: ckan/lib/helpers.py:897
+msgid "Previous results page"
+msgstr "Poprzednia strona wyników"
+
+#: ckan/lib/helpers.py:898
+msgid "Next results page"
+msgstr "Następna strona wyników"
+
+#: ckan/lib/helpers.py:899
+msgid "First results page"
+msgstr "Pierwsza strona wyników"
+
+#: ckan/lib/helpers.py:900
+msgid "Last results page"
+msgstr "Ostatnia strona wyników"
+
+#: ckan/lib/helpers.py:901
+msgid "<span class=\"wcag_hide\">Page </span>$pagenum"
+msgstr "<span class=\"wcag_hide\">Strona </span>$pagenum"
