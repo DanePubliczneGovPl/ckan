@@ -67,7 +67,7 @@ this.ckan.module('api-info', function (jQuery, _) {
 
       this.loadTemplate().done(function (html) {
         module.modal = jQuery(html);
-        module.modal.find('.modal-header :header').append('<button class="close" data-dismiss="modal">×</button>');
+        module.modal.find('.modal-header :header').append('<button class="close" data-dismiss="modal"><span aria-hidden="true">x</span><span class="wcag_hide">Ukryj informacje o API</span></button>');
         module.modal.modal().appendTo(sandbox.body);
       });
     },

@@ -12,7 +12,7 @@ this.ckan.module('confirm-action', function (jQuery, _) {
       template: [
         '<div class="modal">',
         '<div class="modal-header">',
-        '<button type="button" class="close" data-dismiss="modal">×</button>',
+        '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">x</span><span class="wcag_hide">Ukryj komunikat</span></button>',
         '<h3></h3>',
         '</div>',
         '<div class="modal-body"></div>',

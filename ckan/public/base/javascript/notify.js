@@ -51,7 +51,7 @@
    */
   notify.initialize = function (element) {
     element = element instanceof jQuery ? element : jQuery(element);
-    return element.append(jQuery('<a class="close" href="#">&times;</a>')).alert();
+    return element.append(jQuery('<a class="close" href="#"><span aria-hidden="true">x</span><span class="wcag_hide2">Ukryj komunikat o ciasteczkach</span></a>')).alert();
   };
 
   // Initialize any alerts already on the page.
