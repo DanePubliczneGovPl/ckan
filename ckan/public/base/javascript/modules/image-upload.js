@@ -15,6 +15,7 @@ this.ckan.module('image-upload', function($, _) {
         upload: _('Upload'),
         url: _('Link'),
         remove: _('Remove'),
+        remove_specified_file: _('Remove specified file'),
         upload_label: _('Image'),
         upload_tooltip: _('Upload a file on your computer'),
         url_tooltip: _('Link to a URL on the internet (you can also link to an API)')
@@ -51,17 +52,18 @@ this.ckan.module('image-upload', function($, _) {
         .appendTo(this.el);
 
       // Button to set the field to be a URL
-      this.button_url = $('<a href="javascript:;" class="btn"><i class="icon-globe"></i> '+this.i18n('url')+'</a>')
+      this.button_url = $('<a href="javascript:;" class="btn"><i class="icon-globe"></i><span aria-hidden="true">'+
+         this.i18n('url')+'</span><span class="wcag_hide">' + this.i18n('url_tooltip') +'</span></a>')
         .prop('title', this.i18n('url_tooltip'))
         .on('click', this._onFromWeb)
         .insertAfter(this.input);
 
       // Button to attach local file to the form
-      this.button_upload = $('<a href="javascript:;" class="btn"><i class="icon-cloud-upload"></i>'+this.i18n('upload')+'</a>')
+      this.button_upload = $('<a href="javascript:;" class="btn"><i class="icon-cloud-upload"></i><span aria-hidden="true">'+this.i18n('upload')+'</span><span class="wcag_hide">'+this.i18n('upload_tooltip')+'</span></a>')
         .insertAfter(this.input);
 
       // Button for resetting the form when there is a URL set
-      $('<a href="javascript:;" class="btn btn-danger btn-remove-url"><i class="icon-remove"></i></a>')
+      $('<a href="javascript:;" class="btn btn-danger btn-remove-url"><i class="icon-remove"></i><span class="wcag_hide">'+this.i18n('remove_specified_file')+'</span></a>')
         .prop('title', this.i18n('remove'))
         .on('click', this._onRemove)
         .insertBefore(this.field_url_input);

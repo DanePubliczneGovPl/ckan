@@ -60,6 +60,10 @@
     null,
     "Usuń"
   ],
+  "Remove specified file": [
+    null,
+    "Usuń podany plik"
+  ],
   "Resource uploaded": [
     null,
     "Przesłano zasób"
@@ -107,6 +111,18 @@
   "Upload a file": [
     null,
     "Prześlij plik"
+  ],
+  "Upload a file on your computer": [
+    null,
+    "Prześlij plik ze swojego komputera"
+  ],
+  "You are uploading a file. Are you sure you want to navigate away and stop this upload?": [
+    null,
+    "Przesyłasz plik. Czy na pewno chcesz przerwać?"
+  ],
+  "Link to a URL on the internet (you can also link to an API)": [
+    null,
+    "Podaj link do zasobu w internecie (można również odwoływać się do API)"
   ],
   "show less": [
     null,
