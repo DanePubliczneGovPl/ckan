@@ -909,8 +909,8 @@ class Page(paginate.Page):
     # Put each page link into a <li> (for Bootstrap to style it)
 
     def _pagerlink(self, page, text, extra_attributes=None):
-        if re.match(r'^(\d+)$', text):
-            text = Template(self.page_format).safe_substitute({'pagenum': text})
+        if type(text) is int or re.match(r'^(\d+)$', text):
+            text = Template(self.page_format).safe_substitute({'pagenum': str(text)})
 
         anchor = super(Page, self)._pagerlink(page, text)
         extra_attributes = extra_attributes or {}
