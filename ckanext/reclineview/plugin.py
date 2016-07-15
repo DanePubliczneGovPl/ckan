@@ -84,17 +84,17 @@ class ReclineView(ReclineViewBase):
                 'default_title': p.toolkit._('Data Explorer'),
                 }
 
-    def can_view(self, data_dict):
-        resource = data_dict['resource']
-
-        if (resource.get('datastore_active') or
-                resource.get('url') == '_datastore_only_resource'):
-            return True
-        resource_format = resource.get('format', None)
-        if resource_format:
-            return resource_format.lower() in ['csv', 'xls', 'xlsx', 'tsv']
-        else:
-            return False
+    # def can_view(self, data_dict):
+    #     resource = data_dict['resource']
+    #
+    #     if (resource.get('datastore_active') or
+    #             resource.get('url') == '_datastore_only_resource'):
+    #         return True
+    #     resource_format = resource.get('format', None)
+    #     if resource_format:
+    #         return resource_format.lower() in ['csv', 'xls', 'xlsx', 'tsv']
+    #     else:
+    #         return False
 
 
 class ReclineGridView(ReclineViewBase):
