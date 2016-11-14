@@ -149,24 +149,25 @@ this.ckan.module('recline_view', function (jQuery, _) {
     },
 
     _newDataExplorer: function (dataset) {
+      var fmt = I18nMessages('recline', recline.View.translations);
       var views = [
         {
           id: 'grid',
-          label: 'Grid',
+          label: fmt.t('Grid'),
           view: new recline.View.SlickGrid({
             model: dataset
           })
         },
         {
           id: 'graph',
-          label: 'Graph',
+          label: fmt.t('Graph'),
           view: new recline.View.Graph({
             model: dataset
           })
         },
         {
           id: 'map',
-          label: 'Map',
+          label: fmt.t('Map'),
           view: new recline.View.Map({
             model: dataset
           })
@@ -176,7 +177,7 @@ this.ckan.module('recline_view', function (jQuery, _) {
       var sidebarViews = [
         {
           id: 'valueFilter',
-          label: 'Filters',
+          label: fmt.t('Filters'),
           view: new recline.View.ValueFilter({
             model: dataset
           })

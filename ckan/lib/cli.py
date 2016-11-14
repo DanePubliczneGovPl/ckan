@@ -1875,7 +1875,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         import simplejson as json
 
         def create_js(source, lang):
-            print 'Generating', lang
+            print 'Generating', lang, 'from', source
             po = polib.pofile(source)
             data = self.po2dict(po, lang)
             data = json.dumps(data, sort_keys=True,

@@ -1064,10 +1064,10 @@ my.Flot = Backbone.View.extend({
   template: ' \
     <div class="recline-flot"> \
       <div class="panel graph" style="display: block;"> \
-        <div class="js-temp-notice alert alert-block"> \
-          <h3 class="alert-heading">Hey there!</h3> \
+        <div class="js-temp-notice alert alert-warning alert-block"> \
+          {{#t.flot_info}}<h3 class="alert-heading">Hey there!</h3> \
           <p>There\'s no graph here yet because we don\'t know what fields you\'d like to see plotted.</p> \
-          <p>Please tell us by <strong>using the menu on the right</strong> and a graph will automatically appear.</p> \
+          <p>Please tell us by <strong>using the menu on the right</strong> and a graph will automatically appear.</p>{{/t.flot_info}} \
         </div> \
       </div> \
     </div> \
@@ -1105,7 +1105,7 @@ my.Flot = Backbone.View.extend({
 
   render: function() {
     var self = this;
-    var tmplData = this.model.toTemplateJSON();
+    var tmplData = I18nMessages('recline', recline.View.translations).injectMustache(this.model.toTemplateJSON());
     var htmls = Mustache.render(this.template, tmplData);
     this.$el.html(htmls);
     this.$graph = this.$el.find('.panel.graph');
@@ -1161,7 +1161,8 @@ my.Flot = Backbone.View.extend({
           y = item.datapoint[0].toFixed(2);
         }
 
-        var content = _.template('<%= group %> = <%= x %>, <%= series %> = <%= y %>', {
+        var template = _.template('<%= group %> = <%= x %>, <%= series %> = <%= y %>');
+        var content = template({
           group: this.state.attributes.group,
           x: this._xaxisLabel(x),
           series: item.series.label,
@@ -1381,7 +1382,7 @@ my.Flot = Backbone.View.extend({
         }
 
         var yfield = self.model.fields.get(field);
-        var y = doc.getFieldValueUnrendered(yfield);
+        var y = parseFloat(doc.getFieldValueUnrendered(yfield));
 
         if (self.state.attributes.graphType == 'bars') {
           points.push([y, x]);
@@ -1405,33 +1406,37 @@ my.FlotControls = Backbone.View.extend({
   <div class="editor"> \
     <form class="form-stacked"> \
       <div class="clearfix"> \
-        <label>Graph Type</label> \
-        <div class="input editor-type"> \
-          <select> \
-          <option value="lines-and-points">Lines and Points</option> \
-          <option value="lines">Lines</option> \
-          <option value="points">Points</option> \
-          <option value="bars">Bars</option> \
-          <option value="columns">Columns</option> \
-          </select> \
+        <div class="form-group"> \
+          <label>{{t.Graph_Type}}</label> \
+          <div class="input editor-type"> \
+            <select class="form-control"> \
+              <option value="lines-and-points">{{t.Lines_and_Points}}</option> \
+              <option value="lines">{{t.Lines}}</option> \
+              <option value="points">{{t.Points}}</option> \
+              <option value="bars">{{t.Bars}}</option> \
+              <option value="columns">{{t.Columns}}</option> \
+            </select> \
+          </div> \
         </div> \
-        <label>Group Column (Axis 1)</label> \
-        <div class="input editor-group"> \
-          <select> \
-          <option value="">Please choose ...</option> \
-          {{#fields}} \
-          <option value="{{id}}">{{label}}</option> \
-          {{/fields}} \
-          </select> \
+        <div class="form-group"> \
+          <label>{{t.flot_Group_Column}}</label> \
+          <div class="input editor-group"> \
+            <select class="form-control"> \
+              <option value="">{{t.Please_choose}} ...</option> \
+                {{#fields}} \
+              <option value="{{id}}">{{label}}</option> \
+                {{/fields}} \
+            </select> \
+          </div> \
         </div> \
         <div class="editor-series-group"> \
         </div> \
       </div> \
       <div class="editor-buttons"> \
-        <button class="btn editor-add">Add Series</button> \
+        <button class="btn btn-default editor-add">{{t.Add_Series}}</button> \
       </div> \
       <div class="editor-buttons editor-submit" comment="hidden temporarily" style="display: none;"> \
-        <button class="editor-save">Save</button> \
+        <button class="editor-save">{{t.Save}}</button> \
         <input type="hidden" class="editor-id" value="chart-1" /> \
       </div> \
     </form> \
@@ -1439,15 +1444,17 @@ my.FlotControls = Backbone.View.extend({
 ',
   templateSeriesEditor: ' \
     <div class="editor-series js-series-{{seriesIndex}}"> \
-      <label>Series <span>{{seriesName}} (Axis 2)</span> \
-        [<a href="#remove" class="action-remove-series">Remove</a>] \
-      </label> \
-      <div class="input"> \
-        <select> \
-        {{#fields}} \
-        <option value="{{id}}">{{label}}</option> \
-        {{/fields}} \
-        </select> \
+      <div class="form-group"> \
+        <label>{{t.Series}} <span>{{seriesName}} ({{t.Axis_2}})</span> \
+          [<a href="#remove" class="action-remove-series">{{t.Remove}}</a>] \
+        </label> \
+        <div class="input"> \
+          <select class="form-control"> \
+          {{#fields}} \
+          <option value="{{id}}">{{label}}</option> \
+          {{/fields}} \
+          </select> \
+        </div> \
       </div> \
     </div> \
   ',
@@ -1468,6 +1475,7 @@ my.FlotControls = Backbone.View.extend({
   render: function() {
     var self = this;
     var tmplData = this.model.toTemplateJSON();
+    tmplData = I18nMessages('recline', recline.View.translations).injectMustache(tmplData);
     var htmls = Mustache.render(this.template, tmplData);
     this.$el.html(htmls);
 
@@ -1530,6 +1538,7 @@ my.FlotControls = Backbone.View.extend({
       seriesName: String.fromCharCode(idx + 64 + 1)
     }, this.model.toTemplateJSON());
 
+    data = I18nMessages('recline', recline.View.translations).injectMustache(data);
     var htmls = Mustache.render(this.templateSeriesEditor, data);
     this.$el.find('.editor-series-group').append(htmls);
     return this;
@@ -1580,7 +1589,7 @@ my.Grid = Backbone.View.extend({
     var state = _.extend({
         hiddenFields: []
       }, modelEtc.state
-    ); 
+    );
     this.state = new recline.Model.ObjectState(state);
   },
 
@@ -1671,7 +1680,10 @@ my.Grid = Backbone.View.extend({
         field.set({width: width});
       }
     });
-    var htmls = Mustache.render(this.template, this.toTemplateJSON());
+    var tmplData = this.toTemplateJSON();
+    tmplData = I18nMessages('recline', recline.View.translations).injectMustache(tmplData);
+
+    var htmls = Mustache.render(this.template, tmplData);
     this.$el.html(htmls);
     this.model.records.forEach(function(doc) {
       var tr = $('<tr />');
@@ -1732,7 +1744,7 @@ my.GridRow = Backbone.View.extend({
       {{#cells}} \
       <td data-field="{{field}}" style="width: {{width}}px; max-width: {{width}}px; min-width: {{width}}px;"> \
         <div class="data-table-cell-content"> \
-          <a href="javascript:{}" class="data-table-cell-edit" title="Edit this cell">&nbsp;</a> \
+          <a href="javascript:{}" class="data-table-cell-edit" title="{{t.Edit_this_cell}}">&nbsp;</a> \
           <div class="data-table-cell-value">{{{value}}}</div> \
         </div> \
       </td> \
@@ -1759,7 +1771,9 @@ my.GridRow = Backbone.View.extend({
 
   render: function() {
     this.$el.attr('data-id', this.model.id);
-    var html = Mustache.render(this.template, this.toTemplateJSON());
+    var tmplData = this.toTemplateJSON();
+    tmplData = I18nMessages('recline', recline.View.translations).injectMustache(tmplData);
+    var html = Mustache.render(this.template, tmplData);
     this.$el.html(html);
     return this;
   },
@@ -1772,8 +1786,8 @@ my.GridRow = Backbone.View.extend({
       <textarea class="data-table-cell-editor-editor" bind="textarea">{{value}}</textarea> \
       <div id="data-table-cell-editor-actions"> \
         <div class="data-table-cell-editor-action"> \
-          <button class="okButton btn primary">Update</button> \
-          <button class="cancelButton btn danger">Cancel</button> \
+          <button class="okButton btn primary">{{t.Update}}</button> \
+          <button class="cancelButton btn danger">{{t.Cancel}}</button> \
         </div> \
       </div> \
     </div> \
@@ -1787,8 +1801,10 @@ my.GridRow = Backbone.View.extend({
     $(e.target).addClass("hidden");
     var cell = $(e.target).siblings('.data-table-cell-value');
     cell.data("previousContents", cell.text());
-    var templated = Mustache.render(this.cellEditorTemplate, {value: cell.text()});
-    cell.html(templated);
+
+    var tmplData = I18nMessages('recline', recline.View.translations).injectMustache({value: cell.text()});
+    var output = Mustache.render(this.cellEditorTemplate, tmplData);
+    cell.html(output);
   },
 
   onEditorOK: function(e) {
@@ -1800,13 +1816,15 @@ my.GridRow = Backbone.View.extend({
     var newData = {};
     newData[field] = newValue;
     this.model.set(newData);
-    this.trigger('recline:flash', {message: "Updating row...", loader: true});
+
+    var fmt = I18nMessages('recline', recline.View.translations);
+    this.trigger('recline:flash', {message: fmt.t("Updating_row") + "...", loader: true});
     this.model.save().then(function(response) {
-        this.trigger('recline:flash', {message: "Row updated successfully", category: 'success'});
+        this.trigger('recline:flash', {message: fmt.t("Row_updated_successfully"), category: 'success'});
       })
       .fail(function() {
         this.trigger('recline:flash', {
-          message: 'Error saving row',
+          message: fmt.t('Error_saving_row'),
           category: 'error',
           persist: true
         });
@@ -1995,7 +2013,8 @@ my.Map = Backbone.View.extend({
   // Also sets up the editor fields and the map if necessary.
   render: function() {
     var self = this;
-    var htmls = Mustache.render(this.template, this.model.toTemplateJSON());
+    var tmplData = I18nMessages('recline', recline.View.translations).injectMustache(this.model.toTemplateJSON());
+    var htmls = Mustache.render(this.template, tmplData);
     this.$el.html(htmls);
     this.$map = this.$el.find('.panel.map');
     this.redraw();
@@ -2140,7 +2159,7 @@ my.Map = Backbone.View.extend({
 
     _.each(docs,function(doc){
       for (var key in self.features._layers){
-        if (self.features._layers[key].feature.properties.cid == doc.cid){
+        if (self.features._layers[key].feature.geometry.properties.cid == doc.cid){
           self.features.removeLayer(self.features._layers[key]);
         }
       }
@@ -2159,7 +2178,7 @@ my.Map = Backbone.View.extend({
     var dms = coord.split(/[^-?\.\d\w]+/);
     var deg = 0; var m = 0;
     var toDeg = [1, 60, 3600]; // conversion factors for Deg, min, sec
-    var i; 
+    var i;
     for (i = 0; i < dms.length; ++i) {
         if (isNaN(parseFloat(dms[i]))) {
           continue;
@@ -2276,16 +2295,27 @@ my.Map = Backbone.View.extend({
 
   // Private: Sets up the Leaflet map control and the features layer.
   //
-  // The map uses a base layer from [MapQuest](http://www.mapquest.com) based
-  // on [OpenStreetMap](http://openstreetmap.org).
+  // The map uses a base layer from [Stamen](http://maps.stamen.com) based
+  // on [OpenStreetMap data](http://openstreetmap.org) by default, but it can
+  // be configured passing the `mapTilesURL` and `mapTilesAttribution` options
+  // (`mapTilesSubdomains` is also supported), eg:
+  //
+  //    view = new recline.View.Map({
+  //        model: dataset,
+  //        mapTilesURL: '//{s}.tiles.mapbox.com/v4/mapbox.mapbox-streets-v7/{z}/{x}/{y}.png?access_token=pk.XXXX',
+  //        mapTilesAttribution: '&copy; MapBox etc..',
+  //        mapTilesSubdomains: 'ab'
+  //    })
+  //
   //
   _setupMap: function(){
     var self = this;
     this.map = new L.Map(this.$map.get(0));
+    var mapUrl = this.options.mapTilesURL || 'https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}.png';
+    var attribution = this.options.mapTilesAttribution ||'Map tiles by <a href="http://stamen.com">Stamen Design</a> (<a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>). Data by <a href="http://openstreetmap.org">OpenStreetMap</a> (<a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>)';
+    var subdomains = this.options.mapTilesSubdomains || 'abc';
 
-    var mapUrl = "//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
-    var osmAttribution = '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>';
-    var bg = new L.TileLayer(mapUrl, {maxZoom: 18, attribution: osmAttribution ,subdomains: 'abc'});
+    var bg = new L.TileLayer(mapUrl, {maxZoom: 19, attribution: attribution, subdomains: subdomains});
     this.map.addLayer(bg);
 
     this.markers = new L.MarkerClusterGroup(this._clusterOptions);
@@ -2323,26 +2353,27 @@ my.MapMenu = Backbone.View.extend({
     <form class="form-stacked"> \
       <div class="clearfix"> \
         <div class="editor-field-type"> \
+            <span>{{t.map_mapping}}:</span> \
             <label class="radio"> \
               <input type="radio" id="editor-field-type-latlon" name="editor-field-type" value="latlon" checked="checked"/> \
-              Latitude / Longitude fields</label> \
+              {{t.map_mapping_lat_lon}}</label> \
             <label class="radio"> \
               <input type="radio" id="editor-field-type-geom" name="editor-field-type" value="geom" /> \
-              GeoJSON field</label> \
+              {{t.map_mapping_geojson}}</label> \
         </div> \
         <div class="editor-field-type-latlon"> \
-          <label>Latitude field</label> \
+          <label>{{t.Latitude_field}}</label> \
           <div class="input editor-lat-field"> \
-            <select> \
+            <select class="form-control"> \
             <option value=""></option> \
             {{#fields}} \
             <option value="{{id}}">{{label}}</option> \
             {{/fields}} \
             </select> \
           </div> \
-          <label>Longitude field</label> \
+          <label>{{t.Longitude_field}}</label> \
           <div class="input editor-lon-field"> \
-            <select> \
+            <select class="form-control"> \
             <option value=""></option> \
             {{#fields}} \
             <option value="{{id}}">{{label}}</option> \
@@ -2351,9 +2382,9 @@ my.MapMenu = Backbone.View.extend({
           </div> \
         </div> \
         <div class="editor-field-type-geom" style="display:none"> \
-          <label>Geometry field (GeoJSON)</label> \
+          <label>{{t.map_mapping_geojson}}</label> \
           <div class="input editor-geom-field"> \
-            <select> \
+            <select class="form-control"> \
             <option value=""></option> \
             {{#fields}} \
             <option value="{{id}}">{{label}}</option> \
@@ -2363,15 +2394,15 @@ my.MapMenu = Backbone.View.extend({
         </div> \
       </div> \
       <div class="editor-buttons"> \
-        <button class="btn editor-update-map">Update</button> \
+        <button class="btn btn-default editor-update-map">{{t.Update}}</button> \
       </div> \
       <div class="editor-options" > \
         <label class="checkbox"> \
           <input type="checkbox" id="editor-auto-zoom" value="autozoom" checked="checked" /> \
-          Auto zoom to features</label> \
+          {{t.Auto_zoom_to_features}}</label> \
         <label class="checkbox"> \
           <input type="checkbox" id="editor-cluster" value="cluster"/> \
-          Cluster markers</label> \
+          {{t.Cluster_markers}}</label> \
       </div> \
       <input type="hidden" class="editor-id" value="map-1" /> \
     </form> \
@@ -2399,7 +2430,8 @@ my.MapMenu = Backbone.View.extend({
   // Also sets up the editor fields and the map if necessary.
   render: function() {
     var self = this;
-    var htmls = Mustache.render(this.template, this.model.toTemplateJSON());
+    var tmplData = I18nMessages('recline', recline.View.translations).injectMustache(this.model.toTemplateJSON());
+    var htmls = Mustache.render(this.template, tmplData);
     this.$el.html(htmls);
 
     if (this._geomReady() && this.model.fields.length){
@@ -2492,7 +2524,6 @@ my.MapMenu = Backbone.View.extend({
 });
 
 })(jQuery, recline.View);
-
 /*jshint multistr:true */
 
 // Standard JS module setup
@@ -2598,17 +2629,17 @@ my.MultiView = Backbone.View.extend({
       <div class="navigation"> \
         <div class="btn-group" data-toggle="buttons-radio"> \
         {{#views}} \
-        <a href="#{{id}}" data-view="{{id}}" class="btn">{{label}}</a> \
+        <button href="#{{id}}" data-view="{{id}}" class="btn btn-default">{{label}}</button> \
         {{/views}} \
         </div> \
       </div> \
       <div class="recline-results-info"> \
-        <span class="doc-count">{{recordCount}}</span> records\
+        {{#t.num_records}}<span class="doc-count">{recordCount}</span> {recordCount, plural, =1{record} other{records}}{{/t.num_records}}\
       </div> \
       <div class="menu-right"> \
         <div class="btn-group" data-toggle="buttons-checkbox"> \
           {{#sidebarViews}} \
-          <a href="#" data-action="{{id}}" class="btn">{{label}}</a> \
+          <button href="#" data-action="{{id}}" class="btn btn-default">{{label}}</button> \
           {{/sidebarViews}} \
         </div> \
       </div> \
@@ -2619,13 +2650,14 @@ my.MultiView = Backbone.View.extend({
   </div> \
   ',
   events: {
-    'click .menu-right a': '_onMenuClick',
-    'click .navigation a': '_onSwitchView'
+    'click .menu-right button': '_onMenuClick',
+    'click .navigation button': '_onSwitchView'
   },
 
   initialize: function(options) {
     var self = this;
     this._setupState(options.state);
+    var fmt = I18nMessages('recline', recline.View.translations);
 
     // Hash of 'page' views (i.e. those for whole page) keyed by page name
     if (options.views) {
@@ -2633,28 +2665,28 @@ my.MultiView = Backbone.View.extend({
     } else {
       this.pageViews = [{
         id: 'grid',
-        label: 'Grid',
+        label: fmt.t('Grid'),
         view: new my.SlickGrid({
           model: this.model,
           state: this.state.get('view-grid')
         })
       }, {
         id: 'graph',
-        label: 'Graph',
+        label: fmt.t('Graph'),
         view: new my.Graph({
           model: this.model,
           state: this.state.get('view-graph')
         })
       }, {
         id: 'map',
-        label: 'Map',
+        label: fmt.t('Map'),
         view: new my.Map({
           model: this.model,
           state: this.state.get('view-map')
         })
       }, {
         id: 'timeline',
-        label: 'Timeline',
+        label: fmt.t('Timeline'),
         view: new my.Timeline({
           model: this.model,
           state: this.state.get('view-timeline')
@@ -2667,13 +2699,13 @@ my.MultiView = Backbone.View.extend({
     } else {
       this.sidebarViews = [{
         id: 'filterEditor',
-        label: 'Filters',
+        label: fmt.t('Filters'),
         view: new my.FilterEditor({
           model: this.model
         })
       }, {
         id: 'fieldsView',
-        label: 'Fields',
+        label: fmt.t('Fields'),
         view: new my.Fields({
           model: this.model
         })
@@ -2699,7 +2731,7 @@ my.MultiView = Backbone.View.extend({
     });
     this.listenTo(this.model, 'query:done', function() {
       self.clearNotifications();
-      self.$el.find('.doc-count').text(self.model.recordCount || 'Unknown');
+      self.$el.find('.doc-count').text(self.model.recordCount || fmt.t('Unknown'));
     });
     this.listenTo(this.model, 'query:fail', function(error) {
       self.clearNotifications();
@@ -2714,7 +2746,7 @@ my.MultiView = Backbone.View.extend({
           msg += error.message;
         }
       } else {
-        msg = 'There was an error querying the backend';
+        msg = fmt.t('backend_error', {}, 'There was an error querying the backend');
       }
       self.notify({message: msg, category: 'error', persist: true});
     });
@@ -2733,6 +2765,7 @@ my.MultiView = Backbone.View.extend({
     var tmplData = this.model.toTemplateJSON();
     tmplData.views = this.pageViews;
     tmplData.sidebarViews = this.sidebarViews;
+    tmplData = I18nMessages('recline', recline.View.translations).injectMustache(tmplData);
     var template = Mustache.render(this.template, tmplData);
     this.$el.html(template);
 
@@ -2796,8 +2829,8 @@ my.MultiView = Backbone.View.extend({
   },
 
   updateNav: function(pageName) {
-    this.$el.find('.navigation a').removeClass('active');
-    var $el = this.$el.find('.navigation a[data-view="' + pageName + '"]');
+    this.$el.find('.navigation button').removeClass('active');
+    var $el = this.$el.find('.navigation button[data-view="' + pageName + '"]');
     $el.addClass('active');
 
     // add/remove sidebars and hide inactive views
@@ -3108,7 +3141,8 @@ my.SlickGrid = Backbone.View.extend({
   
     // Template for row delete menu , change it if you don't love 
     this.templates = {
-      "deleterow" : '<a href="#" class="recline-row-delete btn" title="Delete row">X</a>'
+      deleterow : '<button href="#" class="recline-row-delete btn btn-default" title="{{t.Delete_row}}"><span class="wcag_hide">{{t.Delete_row}}</span><span aria-hidden="true">X</span></button>',
+      reorderrows: '<div title="{{t.Reorder_row}}" style="height: 100%;"><span class="wcag_hide">{{t.Reorder_row}}</span></div>'
     };
 
     _.bindAll(this, 'render', 'onRecordChanged');
@@ -3163,15 +3197,22 @@ my.SlickGrid = Backbone.View.extend({
     }, self.state.get('gridOptions'));
 
     // We need all columns, even the hidden ones, to show on the column picker
-    var columns = []; 
+    var columns = [];
+    var fmt = I18nMessages('recline', recline.View.translations);
 
     // custom formatter as default one escapes html
     // plus this way we distinguish between rendering/formatting and computed value (so e.g. sort still works ...)
     // row = row index, cell = cell index, value = value, columnDef = column definition, dataContext = full row values
     var formatter = function(row, cell, value, columnDef, dataContext) {
       if(columnDef.id == "del"){
-        return self.templates.deleterow 
+        var formatted = Mustache.render(self.templates.deleterow, fmt.injectMustache({}));
+        return formatted;
       }
+      if(columnDef.id == "#"){
+        var formatted = Mustache.render(self.templates.reorderrows, fmt.injectMustache({}));
+        return formatted;
+      }
+
       var field = self.model.fields.get(columnDef.id);
       if (field.renderer) {
         return  field.renderer(value, field, dataContext);
@@ -3188,7 +3229,7 @@ my.SlickGrid = Backbone.View.extend({
         if (field.type == "date" && isNaN(Date.parse(value))){
           return {
             valid: false,
-            msg: "A date is required, check field field-date-format"
+            msg: fmt.t('date_required', {}, "A date is required, check field field-date-format")
           };
         } else {
           return {valid: true, msg :null } 
@@ -3205,7 +3246,8 @@ my.SlickGrid = Backbone.View.extend({
         behavior: "selectAndMove",
         selectable: false,
         resizable: false,
-        cssClass: "recline-cell-reorder"
+        cssClass: "recline-cell-reorder",
+        formatter: formatter
       })
     }
     // Add column for row delete support
@@ -3222,13 +3264,7 @@ my.SlickGrid = Backbone.View.extend({
     }
 
     function sanitizeFieldName(name) {
-      var sanitized;
-      try{
-        sanitized = $(name).text();
-      } catch(e) {
-        sanitized = '';
-      }
-      return (name !== sanitized && sanitized !== '') ? sanitized : name;
+      return $('<div>').text(name).html();
     }
 
     _.each(this.model.fields.toJSON(),function(field){
@@ -3503,7 +3539,7 @@ my.SlickGrid = Backbone.View.extend({
 my.GridControl= Backbone.View.extend({
   className: "recline-row-add",
   // Template for row edit menu , change it if you don't love
-  template: '<h1><a href="#" class="recline-row-add btn">Add row</a></h1>',
+  template: '<h1><button href="#" class="recline-row-add btn btn-default">{{t.Add_row}}</button></h1>',
   
   initialize: function(options){
     var self = this;
@@ -3514,7 +3550,10 @@ my.GridControl= Backbone.View.extend({
 
   render: function() {
     var self = this;
-    this.$el.html(this.template)
+
+    var tmplData = I18nMessages('recline', recline.View.translations).injectMustache({});
+    var formatted = Mustache.render(this.template, tmplData);
+    this.$el.html(formatted);
   },
 
   events : {
@@ -3581,7 +3620,7 @@ my.GridControl= Backbone.View.extend({
       $input = $('<input type="checkbox" />').data('option', 'autoresize').attr('id','slick-option-autoresize');
       $input.appendTo($li);
       $('<label />')
-          .text('Force fit columns')
+          .text(this.t('Force_fit_columns'))
           .attr('for','slick-option-autoresize')
           .appendTo($li);
       if (grid.getOptions().forceFitColumns) {
@@ -3756,7 +3795,8 @@ my.Timeline = Backbone.View.extend({
         "startDate": start,
         "endDate": end,
         "headline": String(record.get('title') || ''),
-        "text": record.get('description') || record.summary()
+        "text": record.get('description') || record.summary(),
+        "tag": record.get('tags')
       };
       return tlEntry;
     } else {
@@ -3955,22 +3995,22 @@ this.recline.View = this.recline.View || {};
 my.Fields = Backbone.View.extend({
   className: 'recline-fields-view', 
   template: ' \
-    <div class="accordion fields-list well"> \
-    <h3>Fields <a href="#" class="js-show-hide">+</a></h3> \
+    <div class="panel-group fields-list well"> \
+    <h3>{{t.Fields}} <a href="#" class="js-show-hide" title="{{t.Show_field}}"><span class="wcag_hide">{{t.Show_field}}</span><span aria-hidden="true">+</span></a></h3> \
     {{#fields}} \
-      <div class="accordion-group field"> \
-        <div class="accordion-heading"> \
-          <i class="icon-file"></i> \
+      <div class="panel panel-default field"> \
+        <div class="panel-heading"> \
+          <i class="glyphicon glyphicon-file"></i> \
           <h4> \
             {{label}} \
             <small> \
               {{type}} \
-              <a class="accordion-toggle" data-toggle="collapse" href="#collapse{{id}}"> &raquo; </a> \
+              <a class="accordion-toggle" data-toggle="collapse" href="#collapse{{id}}" title="{{t.Expand_and_collapse}}"> <span class="wcag_hide">{{t.Expand_and_collapse}}</span><span aria-hidden="true">&raquo;</span> </a> \
             </small> \
           </h4> \
         </div> \
-        <div id="collapse{{id}}" class="accordion-body collapse"> \
-          <div class="accordion-inner"> \
+        <div id="collapse{{id}}" class="panel-collapse collapse"> \
+          <div class="panel-body"> \
             {{#facets}} \
             <div class="facet-summary" data-facet="{{id}}"> \
               <ul class="facet-items"> \
@@ -4017,6 +4057,7 @@ my.Fields = Backbone.View.extend({
       out.facets = field.facets.toJSON();
       tmplData.fields.push(out);
     });
+    var tmplData = I18nMessages('recline', recline.View.translations).injectMustache(tmplData);
     var templated = Mustache.render(this.template, tmplData);
     this.$el.html(templated);
   }
@@ -4035,31 +4076,33 @@ my.FilterEditor = Backbone.View.extend({
   className: 'recline-filter-editor well', 
   template: ' \
     <div class="filters"> \
-      <h3>Filters</h3> \
-      <a href="#" class="js-add-filter">Add filter</a> \
+      <h3>{{t.Filters}}</h3> \
+      <a href="#" class="js-add-filter">{{t.Add_filter}}</a> \
       <form class="form-stacked js-add" style="display: none;"> \
-        <fieldset> \
-          <label>Field</label> \
-          <select class="fields"> \
+        <div class="form-group"> \
+          <label>{{t.Field}}</label> \
+          <select class="fields form-control"> \
             {{#fields}} \
             <option value="{{id}}">{{label}}</option> \
             {{/fields}} \
           </select> \
-          <label>Filter type</label> \
-          <select class="filterType"> \
-            <option value="term">Value</option> \
-            <option value="range">Range</option> \
-            <option value="geo_distance">Geo distance</option> \
+        </div> \
+        <div class="form-group"> \
+          <label>{{t.Filter_type}}</label> \
+          <select class="filterType form-control"> \
+            <option value="term">{{t.Value}}</option> \
+            <option value="range">{{t.Range}}</option> \
+            <option value="geo_distance">{{t.Geo_distance}}</option> \
           </select> \
-          <button type="submit" class="btn">Add</button> \
-        </fieldset> \
+        </div> \
+        <button type="submit" class="btn btn-default">{{t.Add}}</button> \
       </form> \
       <form class="form-stacked js-edit"> \
         {{#filters}} \
           {{{filterRender}}} \
         {{/filters}} \
         {{#filters.length}} \
-        <button type="submit" class="btn">Update</button> \
+        <button type="submit" class="btn btn-default">{{t.Update}}</button> \
         {{/filters.length}} \
       </form> \
     </div> \
@@ -4070,9 +4113,9 @@ my.FilterEditor = Backbone.View.extend({
         <fieldset> \
           <legend> \
             {{field}} <small>{{type}}</small> \
-            <a class="js-remove-filter" href="#" title="Remove this filter" data-filter-id="{{id}}">&times;</a> \
+            <a class="js-remove-filter" href="#" title="{{t.Remove_this_filter}}" data-filter-id="{{id}}"><span class="wcag_hide">{{t.Remove_this_filter}}</span><span aria-hidden="true">&times;</span></a> \
           </legend> \
-          <input type="text" value="{{term}}" name="term" data-filter-field="{{field}}" data-filter-id="{{id}}" data-filter-type="{{type}}" /> \
+          <input class="input-sm" type="text" value="{{term}}" name="term" data-filter-field="{{field}}" data-filter-id="{{id}}" data-filter-type="{{type}}" /> \
         </fieldset> \
       </div> \
     ',
@@ -4081,12 +4124,16 @@ my.FilterEditor = Backbone.View.extend({
         <fieldset> \
           <legend> \
             {{field}} <small>{{type}}</small> \
-            <a class="js-remove-filter" href="#" title="Remove this filter" data-filter-id="{{id}}">&times;</a> \
+            <a class="js-remove-filter" href="#" title="{{t.Remove_this_filter}}" data-filter-id="{{id}}"><span class="wcag_hide">{{t.Remove_this_filter}}</span><span aria-hidden="true">&times;</span></a> \
           </legend> \
-          <label class="control-label" for="">From</label> \
-          <input type="text" value="{{from}}" name="from" data-filter-field="{{field}}" data-filter-id="{{id}}" data-filter-type="{{type}}" /> \
-          <label class="control-label" for="">To</label> \
-          <input type="text" value="{{to}}" name="to" data-filter-field="{{field}}" data-filter-id="{{id}}" data-filter-type="{{type}}" /> \
+          <div class="form-group"> \
+            <label class="control-label" for="">{{t.From}}</label> \
+            <input class="input-sm" type="text" value="{{from}}" name="from" data-filter-field="{{field}}" data-filter-id="{{id}}" data-filter-type="{{type}}" /> \
+          </div> \
+          <div class="form-group"> \
+            <label class="control-label" for="">{{t.To}}</label> \
+            <input class="input-sm" type="text" value="{{to}}" name="to" data-filter-field="{{field}}" data-filter-id="{{id}}" data-filter-type="{{type}}" /> \
+          </div> \
         </fieldset> \
       </div> \
     ',
@@ -4095,14 +4142,20 @@ my.FilterEditor = Backbone.View.extend({
         <fieldset> \
           <legend> \
             {{field}} <small>{{type}}</small> \
-            <a class="js-remove-filter" href="#" title="Remove this filter" data-filter-id="{{id}}">&times;</a> \
+            <a class="js-remove-filter" href="#" title="{{t.Remove_this_filter}}" data-filter-id="{{id}}"><span class="wcag_hide">{{t.Remove_this_filter}}</span><span aria-hidden="true">&times;</span></a> \
           </legend> \
-          <label class="control-label" for="">Longitude</label> \
-          <input type="text" value="{{point.lon}}" name="lon" data-filter-field="{{field}}" data-filter-id="{{id}}" data-filter-type="{{type}}" /> \
-          <label class="control-label" for="">Latitude</label> \
-          <input type="text" value="{{point.lat}}" name="lat" data-filter-field="{{field}}" data-filter-id="{{id}}" data-filter-type="{{type}}" /> \
-          <label class="control-label" for="">Distance (km)</label> \
-          <input type="text" value="{{distance}}" name="distance" data-filter-field="{{field}}" data-filter-id="{{id}}" data-filter-type="{{type}}" /> \
+          <div class="form-group"> \
+            <label class="control-label" for="">{{t.Longitude}}</label> \
+            <input class="input-sm" type="text" value="{{point.lon}}" name="lon" data-filter-field="{{field}}" data-filter-id="{{id}}" data-filter-type="{{type}}" /> \
+          </div> \
+          <div class="form-group"> \
+            <label class="control-label" for="">{{t.Latitude}}</label> \
+            <input class="input-sm" type="text" value="{{point.lat}}" name="lat" data-filter-field="{{field}}" data-filter-id="{{id}}" data-filter-type="{{type}}" /> \
+          </div> \
+          <div class="form-group"> \
+            <label class="control-label" for="">{{t.Distance_km}}</label> \
+            <input class="input-sm" type="text" value="{{distance}}" name="distance" data-filter-field="{{field}}" data-filter-id="{{id}}" data-filter-type="{{type}}" /> \
+          </div> \
         </fieldset> \
       </div> \
     '
@@ -4129,8 +4182,10 @@ my.FilterEditor = Backbone.View.extend({
     });
     tmplData.fields = this.model.fields.toJSON();
     tmplData.filterRender = function() {
-      return Mustache.render(self.filterTemplates[this.type], this);
+      var filterData = I18nMessages('recline', recline.View.translations).injectMustache(this);
+      return Mustache.render(self.filterTemplates[this.type], filterData);
     };
+    tmplData = I18nMessages('recline', recline.View.translations).injectMustache(tmplData);
     var out = Mustache.render(this.template, tmplData);
     this.$el.html(out);
   },
@@ -4204,10 +4259,10 @@ my.Pager = Backbone.View.extend({
   className: 'recline-pager', 
   template: ' \
     <div class="pagination"> \
-      <ul> \
-        <li class="prev action-pagination-update"><a href="">&laquo;</a></li> \
-        <li class="active"><label for="from">From</label><a><input name="from" type="text" value="{{from}}" /> &ndash; <label for="to">To</label><input name="to" type="text" value="{{to}}" /> </a></li> \
-        <li class="next action-pagination-update"><a href="">&raquo;</a></li> \
+      <ul class="pagination"> \
+        <li class="prev action-pagination-update"><a href="" class="btn btn-default">&laquo;</a></li> \
+        <li class="page-range"><a><label for="from">From</label><input id="from" name="from" type="text" value="{{from}}" /> &ndash; <label for="to">To</label><input id="to" name="to" type="text" value="{{to}}" /> </a></li> \
+        <li class="next action-pagination-update"><a href="" class="btn btn-default">&raquo;</a></li> \
       </ul> \
     </div> \
   ',
@@ -4277,12 +4332,17 @@ this.recline.View = this.recline.View || {};
 my.QueryEditor = Backbone.View.extend({
   className: 'recline-query-editor', 
   template: ' \
-    <form action="" method="GET" class="form-inline"> \
-      <div class="input-prepend text-query"> \
-        <span class="add-on"><i class="icon-search"></i></span> \
-        <label>Search</label><input type="text" name="q" value="{{q}}" class="span2" placeholder="Search data ..." class="search-query" /> \
+    <form action="" method="GET" class="form-inline" role="form"> \
+      <div class="form-group"> \
+        <div class="input-group text-query"> \
+          <div class="input-group-addon"> \
+            <i class="glyphicon glyphicon-search"></i> \
+          </div> \
+          <label for="q">{{t.Search}}</label> \
+          <input class="form-control search-query" type="text" id="q" name="q" value="{{q}}" placeholder="{{t.Search_data}} ..."> \
+        </div> \
       </div> \
-      <button type="submit" class="btn">Go &raquo;</button> \
+      <button type="submit" class="btn btn-default">{{t.Search}} &raquo;</button> \
     </form> \
   ',
 
@@ -4297,11 +4357,11 @@ my.QueryEditor = Backbone.View.extend({
   },
   onFormSubmit: function(e) {
     e.preventDefault();
-    var query = this.$el.find('.text-query input').val();
+    var query = this.$el.find('.search-query').val();
     this.model.set({q: query});
   },
   render: function() {
-    var tmplData = this.model.toJSON();
+    var tmplData = I18nMessages('recline', recline.View.translations).injectMustache(this.model.toJSON());
     var templated = Mustache.render(this.template, tmplData);
     this.$el.html(templated);
   }
@@ -4321,17 +4381,17 @@ my.ValueFilter = Backbone.View.extend({
   className: 'recline-filter-editor well', 
   template: ' \
     <div class="filters"> \
-      <h3>Filters</h3> \
-      <button class="btn js-add-filter add-filter">Add filter</button> \
+      <h3>{{t.Filters}}</h3> \
+      <button class="btn js-add-filter add-filter">{{t.Add_filter}}</button> \
       <form class="form-stacked js-add" style="display: none;"> \
         <fieldset> \
-          <label>Field</label> \
-          <select class="fields"> \
+          <label>{{t.Field}}</label> \
+          <select class="fields form-control"> \
             {{#fields}} \
             <option value="{{id}}">{{label}}</option> \
             {{/fields}} \
           </select> \
-          <button type="submit" class="btn">Add</button> \
+          <button type="submit" class="btn">{{t.Add}}</button> \
         </fieldset> \
       </form> \
       <form class="form-stacked js-edit"> \
@@ -4339,7 +4399,7 @@ my.ValueFilter = Backbone.View.extend({
           {{{filterRender}}} \
         {{/filters}} \
         {{#filters.length}} \
-        <button type="submit" class="btn update-filter">Update</button> \
+        <button type="submit" class="btn update-filter">{{t.Update}}</button> \
         {{/filters.length}} \
       </form> \
     </div> \
@@ -4349,7 +4409,7 @@ my.ValueFilter = Backbone.View.extend({
       <div class="filter-{{type}} filter"> \
         <fieldset> \
           {{field}} \
-          <a class="js-remove-filter" href="#" title="Remove this filter" data-filter-id="{{id}}">&times;</a> \
+          <a class="js-remove-filter" href="#" title="{{t.Remove_this_filter}}" data-filter-id="{{id}}"><span class="wcag_hide">{{t.Remove_this_filter}}</span><span aria-hidden="true">&times;</span></a> \
           <input type="text" value="{{term}}" name="term" data-filter-field="{{field}}" data-filter-id="{{id}}" data-filter-type="{{type}}" /> \
         </fieldset> \
       </div> \
@@ -4376,10 +4436,11 @@ my.ValueFilter = Backbone.View.extend({
       return filter;
     });
     tmplData.fields = this.model.fields.toJSON();
+    var fmt = I18nMessages('recline', recline.View.translations);
     tmplData.filterRender = function() {
-      return Mustache.render(self.filterTemplates.term, this);
+      return Mustache.render(self.filterTemplates.term, fmt.injectMustache(this));
     };
-    var out = Mustache.render(this.template, tmplData);
+    var out = Mustache.render(this.template, fmt.injectMustache(tmplData));
     this.$el.html(out);
   },
   updateFilter: function(input) {
@@ -4423,3 +4484,85 @@ my.ValueFilter = Backbone.View.extend({
 });
 
 })(jQuery, recline.View);
+this.recline = this.recline || {};
+this.recline.View = this.recline.View || {};
+this.recline.View.translations = this.recline.View.translations || {};
+
+this.recline.View.translations['en'] = {
+    'date_required': "A date is required, check field field-date-format",
+    'backend_error': 'There was an error querying the backend',
+    'Distance_km': 'Distance (km)',
+    flot_Group_Column: 'Group Column (Axis 1)',
+
+    map_mapping: 'Coordinates source',
+    map_mapping_lat_lon: 'Latitude / Longitude fields',
+    map_mapping_geojson: 'GeoJSON field'
+};this.recline = this.recline || {};
+this.recline.View = this.recline.View || {};
+this.recline.View.translations = this.recline.View.translations || {};
+
+this.recline.View.translations['pl'] = {
+    Grid: 'Tabela',
+    Graph: 'Wykres',
+    Map: 'Mapa',
+    Timeline: 'Oś czasu',
+    Search_data: 'Wyszukaj w danych',
+    Search: 'Szukaj',
+    Add: 'Dodaj',
+    Add_row: 'Dodaj wiersz',
+    Delete_row: 'Usuń wiersz',
+    Reorder_row: 'Przesuń wiersz',
+    Update: 'Zaktualizuj',
+    Cancel: 'Anuluj',
+    Updating_row: 'Aktualizuję wiersz',
+    Row_updated_successfully: 'Wiersz został zaktualizowany',
+    Error_saving_row: 'Wystąpił błąd aktualizacji wiersza',
+    Filters: 'Filtry',
+    Add_filter: 'Dodaj filtr',
+    Remove_this_filter: 'Usuń filtr',
+    Fields: 'Kolumny',
+    Field: 'Kolumna',
+    Filter_type: 'Typ filtra',
+    Value: 'Wartość',
+    Range: 'Zakres',
+    Geo_distance: 'Odległość',
+    From: 'Od',
+    To: 'Do',
+    Longitude: 'Długość geograficzna',
+    Latitude: 'Szerokość geograficzna',
+    Distance_km: 'Odległość (km)',
+    backend_error: 'Wystąpił błąd połączenia z serwerem',
+    Unknown: '???',
+    Edit_this_cell: 'Edytuj komórkę',
+    date_required: "Data jest wymagana: sprawdź kolumnę field-date-format",
+    Show_field: 'Pokaż kolumnę',
+    Force_fit_columns: 'Dopasuj kolumny do zawartości',
+    Expand_and_collapse: 'Rozwiń i zwiń',
+
+    flot_info: '<h3 class="alert-heading">Witamy!</h3> \
+          <p>Jakie kolumny powinny zostać narysowane na wykresie?</p> \
+          <p>Wybierz je <strong>używając menu po prawej</strong>, a wykres pojawi się automatycznie.</p>',
+    Graph_Type: 'Typ wykresu',
+    Lines_and_Points: 'Linie z punktami',
+    Lines: 'Linie',
+    Points: 'Punkty',
+    Bars: 'Słupki poziome',
+    Columns: 'Słupki',
+    flot_Group_Column: 'Kolumna (Oś X)',
+    Please_choose: 'Proszę wybrać',
+    Remove: 'Usuń',
+    Series: 'Seria',
+    Axis_2: 'Oś Y',
+    Add_Series: 'Dodaj serię danych',
+    Save: 'Zapisz',
+
+    map_mapping: 'Źródło koordynatów',
+    map_mapping_lat_lon: 'Szerokość i długość geo.',
+    map_mapping_geojson: 'Jedna kolumna typu GeoJSON',
+    Latitude_field: 'Kolumna szerokości geo. (WGS84)',
+    Longitude_field: 'Kolumna długości geo. (WGS84)',
+    Auto_zoom_to_features: 'Kadruj, aby pokazać wszytkie punkty',
+    Cluster_markers: 'Łącz pobliskie punkty w grupy',
+
+    num_records: '<span class="doc-count">{recordCount}</span> rekordów'
+};

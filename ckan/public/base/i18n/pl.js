@@ -131,5 +131,9 @@
   "show more": [
     null,
     "pokaż więcej"
+  ],
+  "Add Filter": [
+    null,
+    "Dodaj filtr"
   ]
 }
