@@ -56,6 +56,14 @@
     null,
     "Potwierdź wykonanie akcji"
   ],
+  "Reorder resource view": [
+    null,
+    "Zmień kolejność widoków"
+  ],
+  "Reorder resources": [
+    null,
+    "Zmień kolejność zasobów"
+  ],
   "Remove": [
     null,
     "Usuń"
@@ -67,6 +75,14 @@
   "Resource uploaded": [
     null,
     "Przesłano zasób"
+  ],
+  "Save order": [
+    null,
+    "Zapisz kolejność"
+  ],
+  "Saving": [
+    null,
+    "Trwa zapisywanie"
   ],
   "Show more": [
     null,

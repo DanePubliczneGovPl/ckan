@@ -6,7 +6,7 @@ this.ckan.module('resource-view-filters', function (jQuery, _) {
         resourceId = self.options.resourceId,
         fields = self.options.fields,
         dropdownTemplate = self.options.dropdownTemplate,
-        addFilterTemplate = self.options.addFilterTemplate,
+        addFilterTemplate = self.options.addFilterTemplate || '<a href="#">' + _('Add Filter').fetch() + '</a>',
         filtersDiv = $('<div></div>');
 
     var filters = ckan.views.filters.get();
@@ -175,9 +175,6 @@ this.ckan.module('resource-view-filters', function (jQuery, _) {
         '  {filter}:',
         '  <div class="resource-view-filter-values"></div>',
         '</div>',
-      ].join('\n'),
-      addFilterTemplate: [
-        '<a href="#">' + _('Add Filter').fetch() + '</a>',
       ].join('\n')
     }
   };
