@@ -11,8 +11,8 @@ import logging
 import re
 import os
 import urllib
-import urlparse
 import pprint
+import copy
 import urlparse
 from urllib import urlencode
 from string import Template
