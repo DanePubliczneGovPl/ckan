@@ -1566,6 +1566,9 @@ def package_search(context, data_dict):
     :param facet.field: the fields to facet upon.  Default empty.  If empty,
         then the returned facet information is empty.
     :type facet.field: list of strings
+    :param use_default_schema: use default package schema instead of
+        a custom schema defined with an IDatasetForm plugin (default: False)
+    :type use_default_schema: bool
 
 
     The following advanced Solr parameters are supported as well. Note that
@@ -1600,9 +1603,6 @@ def package_search(context, data_dict):
         "count", "display_name" and "name" entries.  The display_name is a
         form of the name that can be used in titles.
     :type search_facets: nested dict of dicts.
-    :param use_default_schema: use default package schema instead of
-        a custom schema defined with an IDatasetForm plugin (default: False)
-    :type use_default_schema: bool
 
     An example result: ::
 
@@ -1663,7 +1663,11 @@ def package_search(context, data_dict):
 
     results = []
     if not abort:
-        data_source = 'data_dict' if data_dict.get('use_default_schema') else 'validated_data_dict'
+        if asbool(data_dict.get('use_default_schema')):
+            data_source = 'data_dict'
+        else:
+            data_source = 'validated_data_dict'
+        data_dict.pop('use_default_schema', None)
         # return a list of package ids
         data_dict['fl'] = 'id {0}'.format(data_source)
 
@@ -1672,8 +1676,7 @@ def package_search(context, data_dict):
         # instead set it to only retrieve public datasets
         fq = data_dict.get('fq', '')
         if not context.get('ignore_capacity_check', False):
-            fq = ' '.join(p for p in fq.split(' ')
-                          if not 'capacity:' in p)
+            fq = ' '.join(p for p in fq.split() if 'capacity:' not in p)
             data_dict['fq'] = fq + ' capacity:"public"'
 
         # Pop these ones as Solr does not need them
@@ -3201,12 +3204,14 @@ def dashboard_activity_list_html(context, data_dict):
     '''
     activity_stream = dashboard_activity_list(context, data_dict)
     model = context['model']
+    user_id = context['user']
     offset = data_dict.get('offset', 0)
     extra_vars = {
         'controller': 'user',
         'action': 'activity',
         'id': context['user'],
         'offset': offset,
+        'id': user_id
     }
     return activity_streams.activity_list_to_html(context, activity_stream,
                                                   extra_vars)

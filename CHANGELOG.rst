@@ -7,6 +7,49 @@
 Changelog
 ---------
 
+v2.3.5 2016-11-02
+=================
+
+ * Fix "Load more" functionality in the dashboard (#2346)
+ * Fix filters not working when embedding a resource view (#2657)
+ * Proper sanitation of header name on SlickGrid view (#2923)
+ * Fix unicode error when indexing field of type JSON (#2969)
+ * Fix group feeds returning no datasets (#2955)
+ * Replace MapQuest tiles in Recline with Stamen Terrain (#3162)
+ * Fix bulk operations not taking effect (#3199)
+ * Raise validation errors on group/org_member_create (#3108)
+ * Incorrect warnings when ckan.views.default_views is empty (#3093)
+ * Don't show deleted users/datasets on member_list (#3078)
+
+v2.3.4 2016-03-31
+=================
+
+Bug fixes:
+ * Use `resource.url` as raw_resource_url (#2873)
+ * Fix DomainObject.count() to return count (#2919)
+ * Prevent unicode/ascii conversion errors in DataStore
+ * Fix datastore_delete erasing the db when filters is blank (#2885)
+ * Avoid package_search exception when using use_default_schema (#2848)
+ * resource_edit incorrectly setting action to new instead of edit
+ * Use `ckan.site_url` to generate urls of resources (#2592)
+ * Don't hide actual exception on paster commands
+
+v2.3.3 2015-12-17
+=================
+
+Bug fixes:
+ * Fix Markdown rendering issue
+ * Return default error page on fanstatic errors
+ * Prevent authentication when using API callbacks
+
+v2.3.2 2015-09-02
+=================
+
+Bug fixes:
+* Fix autodetect for TSV resources (#2553)
+* Improve character escaping in DataStore parameters
+* Fix "paster db init" when celery is configured with a non-database backend
+
 v2.3.1 2015-07-22
 =================
 
@@ -321,6 +364,14 @@ Troubleshooting:
 
   Also see the previous point for other ``who.ini`` changes.
 
+v2.2.4 2015-12-17
+=================
+
+Bug fixes:
+ * Fix Markdown rendering issue
+ * Return default error page on fanstatic errors
+ * Prevent authentication when using API callbacks
+
 v2.2.3 2015-07-22
 =================
 
@@ -553,6 +604,14 @@ Troubleshooting:
    leaving the fields empty. Also make sure to restart running processes like
    harvesters after the update to make sure they use the new code base.
 
+v2.1.6 2015-12-17
+=================
+
+Bug fixes:
+ * Fix Markdown rendering issue
+ * Return default error page on fanstatic errors
+ * Prevent authentication when using API callbacks
+
 v2.1.5 2015-07-22
 =================
 
@@ -719,6 +778,14 @@ Deprecated and removed:
 Known issues:
  * Under certain authorization setups the frontend for the groups functionality
    may not work as expected (See #1176 #1175).
+
+v2.0.8 2015-12-17
+=================
+
+Bug fixes:
+ * Fix Markdown rendering issue
+ * Return default error page on fanstatic errors
+ * Prevent authentication when using API callbacks
 
 v2.0.7 2015-07-22
 =================

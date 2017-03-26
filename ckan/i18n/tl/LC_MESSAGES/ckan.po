@@ -3,25 +3,26 @@
 # This file is distributed under the same license as the ckan project.
 # 
 # Translators:
+# Joel Natividad <joel.natividad@ontodia.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: CKAN\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2015-01-26 11:55+0000\n"
-"PO-Revision-Date: 2015-01-26 12:19+0000\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: Divehi (http://www.transifex.com/projects/p/ckan/language/dv/)\n"
+"PO-Revision-Date: 2015-12-07 16:53+0000\n"
+"Last-Translator: Joel Natividad <joel.natividad@ontodia.com>\n"
+"Language-Team: Tagalog (http://www.transifex.com/okfn/ckan/language/tl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
-"Language: dv\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: tl\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #: ckan/new_authz.py:178
 #, python-format
 msgid "Authorization function not found: %s"
-msgstr ""
+msgstr "Hindi natagpuan ang function para sa awtorisasyon: %s"
 
 #: ckan/new_authz.py:190
 msgid "Admin"
@@ -33,19 +34,19 @@ msgstr ""
 
 #: ckan/new_authz.py:198
 msgid "Member"
-msgstr ""
+msgstr "Miembro"
 
 #: ckan/controllers/admin.py:27
 msgid "Need to be system administrator to administer"
-msgstr ""
+msgstr "Kailangan maging isang system administrator para mag-administer"
 
 #: ckan/controllers/admin.py:43
 msgid "Site Title"
-msgstr ""
+msgstr "Pamagat ng site"
 
 #: ckan/controllers/admin.py:44
 msgid "Style"
-msgstr ""
+msgstr "Estilo"
 
 #: ckan/controllers/admin.py:45
 msgid "Site Tag Line"
@@ -233,15 +234,15 @@ msgstr ""
 #: ckan/controllers/group.py:795 ckan/controllers/group.py:880
 #: ckan/controllers/package.py:1288 ckan/controllers/package.py:1303
 msgid "Group not found"
-msgstr ""
+msgstr "Di matagpuan ang grupo"
 
 #: ckan/controllers/feed.py:234 ckan/controllers/group.py:364
 msgid "Organization not found"
-msgstr ""
+msgstr "Di matagpuan ang organisasyon"
 
 #: ckan/controllers/group.py:172
 msgid "Incorrect group type"
-msgstr ""
+msgstr "Maling tipo ng grupo"
 
 #: ckan/controllers/group.py:192 ckan/controllers/group.py:387
 #: ckan/controllers/group.py:486 ckan/controllers/group.py:527
@@ -261,7 +262,7 @@ msgstr ""
 #: ckan/templates/organization/read_base.html:6
 #: ckan/templates/package/base.html:14
 msgid "Organizations"
-msgstr ""
+msgstr "Organisasyon"
 
 #: ckan/controllers/group.py:286 ckan/controllers/home.py:71
 #: ckan/controllers/package.py:242 ckan/lib/helpers.py:682
@@ -275,7 +276,7 @@ msgstr ""
 #: ckan/templates/package/read_base.html:25
 #: ckan/templates/revision/diff.html:16 ckan/templates/revision/read.html:84
 msgid "Groups"
-msgstr ""
+msgstr "Mga Grupo"
 
 #: ckan/controllers/group.py:287 ckan/controllers/home.py:72
 #: ckan/controllers/package.py:243 ckan/lib/helpers.py:683
@@ -295,22 +296,22 @@ msgstr ""
 #: ckan/controllers/group.py:289 ckan/controllers/home.py:74
 #: ckan/controllers/package.py:245 ckan/lib/helpers.py:685
 msgid "Licenses"
-msgstr ""
+msgstr "Mga lisensiya"
 
 #: ckan/controllers/group.py:429
 msgid "Not authorized to perform bulk update"
-msgstr ""
+msgstr "Walang pahintulot mag-perform ng bulk update"
 
 #: ckan/controllers/group.py:446
 msgid "Unauthorized to create a group"
-msgstr ""
+msgstr "Walang pahintulot lumikha ng grupo"
 
 #: ckan/controllers/group.py:495 ckan/controllers/package.py:338
 #: ckan/controllers/package.py:803 ckan/controllers/package.py:1436
 #: ckan/controllers/package.py:1472
 #, python-format
 msgid "User %r not authorized to edit %s"
-msgstr ""
+msgstr "Miembro %r walang pahintulot mag-edit ng %s"
 
 #: ckan/controllers/group.py:531 ckan/controllers/group.py:563
 #: ckan/controllers/package.py:967 ckan/controllers/package.py:1014
