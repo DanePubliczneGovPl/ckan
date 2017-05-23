@@ -125,6 +125,8 @@ this.ckan.module('resource-reorder', function($, _) {
           module.cache = module.el.html();
           module.reset();
           module.is_reordering = false;
+        }, function(jqXHR, textStatus, errorThrown) {
+          window.alert("Wystąpił błąd: " + JSON.stringify(jqXHR.responseJSON.error));
         });
       }
     },
