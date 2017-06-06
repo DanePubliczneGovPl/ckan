@@ -5,6 +5,11 @@ import logging
 from pylons import config as pylons_config
 from pkg_resources import iter_entry_points, VersionConflict
 
+# Fix for Kombu 2.5.0 and Python 2.7.11
+import uuid
+if not hasattr(uuid, '_uuid_generate_random'):
+    uuid._uuid_generate_random = None
+
 log = logging.getLogger(__name__)
 
 LIST_PARAMS = """CELERY_IMPORTS ADMINS ROUTES""".split()
